@@ -1,0 +1,83 @@
+---
+title: "Homework 4"
+author: "Chris Ballenger"
+date: "6/3/2018"
+output: 
+    html_document:
+        keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fivethirtyeight)
+library(plyr)
+```
+
+### Pleae install the following libraries
+* fivethirtyeight
+* plyr
+
+## Question 1: FiveThirtyEight Data
+
+#### a) Install Package
+```{r eval=FALSE}
+install.packages("fivethirtyeight")
+trying URL 'https://cran.rstudio.com/bin/macosx/el-capitan/contrib/3.5/fivethirtyeight_0.4.0.tgz'
+Content type 'application/x-gzip' length 6058695 bytes (5.8 MB)
+==================================================
+downloaded 5.8 MB
+
+
+The downloaded binary packages are in
+	/var/folders/8r/jnnz1p2573q22hlc6pg2f9jc0000gn/T//RtmpCY3lpr/downloaded_packages
+```
+
+#### b) Assign college_recent_grads to df variable
+```{r echo=TRUE}
+df <- college_recent_grads
+str(df)
+```
+
+#### c) Comment the URL
+https://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/
+
+#### d) Dimensions and column names
+```{r echo=TRUE}
+dim(df)
+names(df)
+```
+
+## Question 2: Data Summary
+#### a) Column Names and Column Counts
+```{r echo = TRUE}
+names(df)
+ncol(df)
+```
+
+#### b) Count major_catagory
+```{r echo=TRUE}
+major_count <- count(df, 'major_category')
+major_count
+```
+
+#### c) Bar Plot of Major Catagories
+```{r echo=TRUE}
+op <- par(mar=c(4,15,2,1), las= 2)
+barplot(
+    height=major_count$freq,
+    names.arg = major_count$major_category,
+    horiz = TRUE,
+    main = 'The Economic Guide To Picking A College Major',
+    xlab = 'Frequency',
+    ylab = 'Catagory',
+    col = 'Green'
+)
+```
+
+#### d) write a csv file
+```{r eval = FALSE}
+write.csv(df, file = 'MSDS 6306/college_grad_students.csv',row.names = FALSE)
+```
+
+## Question 3 Codebook
+https://github.com/toadies/Homework_6306/blob/master/README.md
