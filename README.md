@@ -11,7 +11,7 @@ Assignment4/CBallenger_Livesession4assignment.Rmd
     + plyr
 
 ### Markdown file for Homework 4
-Assignment4/CBallenger_Livesession4assignment.Rmd
+Assignment4/CBallenger_Livesession4assignment.md
 
 ### HTML knit file
 Assignment4/CBallenger_Livesession4assignment.html
