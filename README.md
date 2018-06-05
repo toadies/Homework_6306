@@ -2,7 +2,7 @@
 
 ### Live Assignment 4
 ### R Markdown for Homework 4
-Assignment4/Cballenger_Livesession4assignment.Rmd
+Assignment4/CBallenger_Livesession4assignment.Rmd
 * Data provided by 538
     + https://github.com/rudeboybert/fivethirtyeight
     + https://github.com/fivethirtyeight/data
@@ -11,10 +11,10 @@ Assignment4/Cballenger_Livesession4assignment.Rmd
     + plyr
 
 ### Markdown file for Homework 4
-Assignment4/Cballenger_Livesession4assignment.Rmd
+Assignment4/CBallenger_Livesession4assignment.Rmd
 
 ### HTML knit file
-Assignment4/Cballenger_Livesession4assignment.html
+Assignment4/CBallenger_Livesession4assignment.html
 
 ### csv file of college_grad_students
 Assignment4/college_grad_students.csv
