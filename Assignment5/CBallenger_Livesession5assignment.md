@@ -156,3 +156,81 @@ sapply(result, function(x) sum(is.na(x)))
 ##                 0
 ```
 
+## Question 3
+#### a) Total the total_counts_yyyy columns and sum all values
+
+```r
+result$total_counts_all <- result$total_counts_2015 + result$total_counts_2016
+#Total children
+sum(result$total_counts_all)
+```
+
+```
+## [1] 11404228
+```
+
+#### b) Show top 10 most popular names
+
+```r
+result <- result[order(result$total_counts_all, decreasing = TRUE),]
+head(result, 10)
+```
+
+```
+##           name gender_2015 total_counts_2015 gender_2016 total_counts_2016
+## 9820      Emma           F             20415           F             19414
+## 23607   Olivia           F             19638           F             19246
+## 23258     Noah           M             19594           M             19015
+## 19277     Liam           M             18330           M             18138
+## 27782   Sophia           F             17381           F             16070
+## 3725       Ava           F             16340           F             16237
+## 21102    Mason           M             16591           M             15192
+## 30128  William           M             15863           M             15668
+## 13054    Jacob           M             15914           M             14416
+## 12698 Isabella           F             15574           F             14722
+##       total_counts_all
+## 9820             39829
+## 23607            38884
+## 23258            38609
+## 19277            36468
+## 27782            33451
+## 3725             32577
+## 21102            31783
+## 30128            31531
+## 13054            30330
+## 12698            30296
+```
+
+#### c) Show only girl names
+
+```r
+girl_names <- result[which(c(result$gender_2015=='F',result$gender_2016=='F')),]
+head(girl_names)
+```
+
+```
+##           name gender_2015 total_counts_2015 gender_2016 total_counts_2016
+## 9820      Emma           F             20415           F             19414
+## 23607   Olivia           F             19638           F             19246
+## 27782   Sophia           F             17381           F             16070
+## 3725       Ava           F             16340           F             16237
+## 12698 Isabella           F             15574           F             14722
+## 21722      Mia           F             14871           F             14366
+##       total_counts_all
+## 9820             39829
+## 23607            38884
+## 27782            33451
+## 3725             32577
+## 12698            30296
+## 21722            29237
+```
+
+#### d) Write to csv file data/top_10_girl_names.csv
+
+```r
+write.csv(head(girl_names[,c(1,6)],10), file='data/top_10_girl_names.csv', row.names = FALSE)
+```
+
+## Question 4) Upload to GitHub
+https://github.com/toadies/Homework_6306/tree/master/Assignment5/data
+

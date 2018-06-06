@@ -50,4 +50,4 @@ head(result, 10)
 girl_names <- result[which(c(result$gender_2015=='F',result$gender_2016=='F')),]
 head(girl_names)
 
-write.csv(head(girl_names[,c(1,6)]), file='data/top_10_girl_names.csv')
+write.csv(head(girl_names[,c(1,6)],10), file='data/top_10_girl_names.csv', row.names = FALSE)
