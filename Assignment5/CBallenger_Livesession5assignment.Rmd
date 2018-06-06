@@ -1,0 +1,96 @@
+---
+title: "Homework 5"
+author: "Chris Ballenger"
+date: "6/5/2018"
+output: 
+    html_document:
+        keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Quesiton 1 Data Munging
+
+#### a) Import and add column names
+```{r echo=TRUE}
+df <- read.table('data/yob2016.txt',sep=';',header = FALSE)
+names(df) <- c('name','gender','total_kids')
+head(df)
+```
+
+#### b) Summary & Structure
+Summary
+```{r echo=TRUE}
+summary( df )
+```
+Structure
+```{r echo=TRUE}
+dim( df )
+str( df )
+```
+
+#### c) Search for a specific name
+```{r echo = TRUE}
+df[grep('yyy$', df[,1]),]
+```
+
+#### d) remove value and create new dataset
+```{r echo = TRUE}
+y2016 <- df[-grep('yyy$', df[,1]),]
+```
+
+## Question 2 Data Merging
+#### a) Import and add column names for yob2015
+```{r echo = TRUE}
+y2015 <- read.table('data/yob2015.txt',sep=',',header = FALSE)
+names(y2015) <- c('name','gender','total_names_2015')
+head(y2015)
+```
+
+#### b) Display last 10 rows
+The most uncomon names all start with Z
+```{r echo = TRUE}
+tail(y2015, 10)
+```
+
+#### c) Merge y2016 & y2015
+```{r echo = TRUE}
+# Merge Data
+result <- merge(y2015, y2016, by.x = 'name', by.y = 'name')
+# Update Names
+names(result) <- c('name','gender_2015','total_counts_2015','gender_2016','total_counts_2016')
+head(result)
+
+# Validate no NAs
+sapply(result, function(x) sum(is.na(x)))
+```
+
+## Question 3
+#### a) Total the total_counts_yyyy columns and sum all values
+```{r echo = TRUE}
+result$total_counts_all <- result$total_counts_2015 + result$total_counts_2016
+#Total children
+sum(result$total_counts_all)
+```
+
+#### b) Show top 10 most popular names
+```{r echo = TRUE}
+result <- result[order(result$total_counts_all, decreasing = TRUE),]
+head(result, 10)
+```
+
+#### c) Show only girl names
+```{r echo = TRUE}
+girl_names <- result[which(c(result$gender_2015=='F',result$gender_2016=='F')),]
+head(girl_names)
+```
+
+#### d) Write to csv file data/top_10_girl_names.csv
+```{r eval = FALSE, echo= TRUE}
+write.csv(head(girl_names[,c(1,6)],10), file='data/top_10_girl_names.csv', row.names = FALSE)
+```
+
+## Question 4) Upload to GitHub
+
