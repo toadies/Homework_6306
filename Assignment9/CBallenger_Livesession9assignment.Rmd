@@ -153,3 +153,30 @@ ggplot( stats , aes( PLAYER, FG., fill=Position ) ) +
     labs(title="Field Goals Percentage Per Game",x ="Player", y = "Field Goal %" ) +
     coord_flip() +
     theme(plot.title = element_text(hjust = 0.5))
+```
+
+#### Code Book
+```{r echo = TRUE, eval = FALSE}
+
+# Code Book For Cast of Harry Potter
+makeCodebook(cast)
+
+# Code Book for Shooting Statistics
+attr(stats$FGM, "shortDescription") <- "Field Goals Made per game"
+attr(stats$FGA, "shortDescription") <- "Field Goals Attempted per game"
+attr(stats$FG., "shortDescription") <- "Field Goal Percentage per game"
+attr(stats$X3PM, "shortDescription") <- "3 Points Made per game"
+attr(stats$X3PA, "shortDescription") <- "3 Points Attempted per game"
+attr(stats$X3P., "shortDescription") <- "3 Points Percentage per game"
+attr(stats$FTM, "shortDescription") <- "Free Throws Made per game"
+attr(stats$FTA, "shortDescription") <- "Free Throws Attempted per game"
+attr(stats$FT., "shortDescription") <- "Free Throws Percentage per game"
+attr(stats$X2PM, "shortDescription") <- "2 Points Made per game"
+attr(stats$X2PA, "shortDescription") <- "2 Points Attempted per game"
+attr(stats$X2P., "shortDescription") <- "2 Points Percentage per game"
+attr(stats$PPS, "shortDescription") <- "Points Per Shot per game"
+attr(stats$AFG., "shortDescription") <- "Adjusted Field Goal Percentage per game"
+
+# Create the cookbook for descriptions
+makeCodebook(stats, replace=TRUE)
+```

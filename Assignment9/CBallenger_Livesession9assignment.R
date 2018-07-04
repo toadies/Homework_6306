@@ -3,6 +3,7 @@ setwd("/Users/christopherballenger/Documents/Data Science/MSDS 6306/Projects/Hom
 library(RCurl)
 library(XML)
 library(ggplot2)
+library(dataMaid)
 
 # Get the HTML from IMDB
 response <- GET("https://www.imdb.com/title/tt1201607/fullcredits?ref_=tt_ql_1")
@@ -107,6 +108,33 @@ ggplot( stats , aes( PLAYER, FG., fill=Position ) ) +
     coord_flip() +
     theme(plot.title = element_text(hjust = 0.5))
 
-# library(knitr)
-# library(rmarkdown)
-# render("CBallenger_Livesession9assignment.Rmd")
+library(knitr)
+library(rmarkdown)
+render("CBallenger_Livesession9assignment.Rmd")
+
+# Code Book For Cast of Harry Potter
+makeCodebook(cast)
+
+# Code Book for Shooting Statistics
+attr(stats$FGM, "shortDescription") <- "Field Goals Made per game"
+attr(stats$FGA, "shortDescription") <- "Field Goals Attempted per game"
+attr(stats$FG., "shortDescription") <- "Field Goal Percentage per game"
+attr(stats$X3PM, "shortDescription") <- "3 Points Made per game"
+attr(stats$X3PA, "shortDescription") <- "3 Points Attempted per game"
+attr(stats$X3P., "shortDescription") <- "3 Points Percentage per game"
+attr(stats$FTM, "shortDescription") <- "Free Throws Made per game"
+attr(stats$FTA, "shortDescription") <- "Free Throws Attempted per game"
+attr(stats$FT., "shortDescription") <- "Free Throws Percentage per game"
+attr(stats$X2PM, "shortDescription") <- "2 Points Made per game"
+attr(stats$X2PA, "shortDescription") <- "2 Points Attempted per game"
+attr(stats$X2P., "shortDescription") <- "2 Points Percentage per game"
+attr(stats$PPS, "shortDescription") <- "Points Per Shot per game"
+attr(stats$AFG., "shortDescription") <- "Adjusted Field Goal Percentage per game"
+
+# Create the cookbook for descriptions
+makeCodebook(stats, replace=TRUE)
+
+
+library(knitr)
+library(rmarkdown)
+render("CBallenger_Livesession9assignment.Rmd")
