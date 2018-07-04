@@ -2,6 +2,7 @@ setwd("/Users/christopherballenger/Documents/Data Science/MSDS 6306/Projects/Hom
 
 library(RCurl)
 library(XML)
+library(ggplot2)
 
 # Get the HTML from IMDB
 response <- GET("https://www.imdb.com/title/tt1201607/fullcredits?ref_=tt_ql_1")
@@ -56,7 +57,56 @@ for( i in 1:nrow(cast) ) {
 # Combine Vectors with existing Data Frame
 cast <- data.frame( FirstName = firstName, LastName = lastName, character = cast$character)
 
+# Get the HTML from ESPN
+response <- GET("http://www.espn.com/nba/team/stats/_/name/sa/san-antonio-spurs")
+response <- htmlParse(response)
 
-library(knitr)
-library(rmarkdown)
-render("CBallenger_Livesession9assignment.Rmd")
+# Get Second Table labeled class=tablehead from webpage document
+qry_xpath <- "(//table[@class='tablehead'])[2]/tr[contains(@class, 'oddrow player')]/td | (//table[@class='tablehead'])[2]/tr[contains(@class, 'evenrow player')]/td"
+result <- xpathSApply(response, qry_xpath, xmlValue)
+stats <- data.frame( matrix(result, nrow=14, ncol =15, byrow = TRUE), stringsAsFactors=FALSE )
+
+# Get Column Names
+qry_xpath <- "(//table[@class='tablehead'])[2]/tr[@class='colhead']/td"
+result <- xpathSApply(response, qry_xpath, xmlValue)
+names(stats) <- make.names(result)
+
+# Update stat fields to numeric
+stats <- transform( 
+    stats,
+    FGM = as.numeric(FGM),
+    FGA = as.numeric(FGA),
+    FG. = as.numeric(FG.),
+    X3PM = as.numeric(X3PM),
+    X3PA = as.numeric(X3PA),
+    X3P. = as.numeric(X3P.),
+    FTM = as.numeric(FTM),
+    FTA = as.numeric(FTA),
+    FT. = as.numeric(FT.),
+    X2PM = as.numeric(X2PM),
+    X2PA = as.numeric(X2PA),
+    X2P. = as.numeric(X2P.),
+    PPS = as.numeric(PPS),
+    AFG. = as.numeric(AFG.)
+)
+
+# set vectors for First Name and Last Name to temporarly store names
+players <- data.frame( 
+    do.call( 'rbind', strsplit( as.character( test_stats$PLAYER ),", ",fixed=TRUE))
+)
+names(players) <- c('Player', 'Position')
+stats$PLAYER <- players$Player
+stats$Position <- players$Position
+str(stats)
+
+Palette1 <- c('red','green','blue','violet','black')
+ggplot( stats , aes( PLAYER, FG., fill=Position ) ) +
+    geom_bar(stat="identity") +
+    scale_fill_manual(values=Palette1) +
+    labs(title="Field Goals Percentage Per Game",x ="Player", y = "Field Goal %" ) +
+    coord_flip() +
+    theme(plot.title = element_text(hjust = 0.5))
+
+# library(knitr)
+# library(rmarkdown)
+# render("CBallenger_Livesession9assignment.Rmd")

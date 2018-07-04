@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(RCurl)
 library(XML)
 library(kableExtra)
+library(ggplot2)
 ```
 
 ### Quesiton 1 Harry Potter Cast (50%)
@@ -88,3 +89,67 @@ cast <- data.frame( FirstName = firstName, LastName = lastName, Character = cast
 kable( head( cast, 10 ), row.names=FALSE )  %>%
   kable_styling(bootstrap_options = c("striped", "condensed"), full_width = F)
 ```
+
+### Question 2 SportsBall (50%)
+#### a) ESPN Data
+* Import Shooting Statistics of the San Antonio Spurs
+    * http://www.espn.com/nba/team/stats/_/name/sa/san-antonio-spurs
+#### b) R Code to read HTML Document
+```{r echo=TRUE}
+# Get the HTML from ESPN
+response <- GET("http://www.espn.com/nba/team/stats/_/name/sa/san-antonio-spurs")
+response <- htmlParse(response)
+
+# Get Second Table labeled class=tablehead from webpage document
+qry_xpath <- "(//table[@class='tablehead'])[2]/tr[contains(@class, 'oddrow player')]/td | (//table[@class='tablehead'])[2]/tr[contains(@class, 'evenrow player')]/td"
+result <- xpathSApply(response, qry_xpath, xmlValue)
+stats <- data.frame( matrix(result, nrow=14, ncol =15, byrow = TRUE), stringsAsFactors=FALSE )
+
+# Get Column Names
+qry_xpath <- "(//table[@class='tablehead'])[2]/tr[@class='colhead']/td"
+result <- xpathSApply(response, qry_xpath, xmlValue)
+names(stats) <- make.names(result)
+head(stats)
+```
+
+#### c) Clean the data
+```{r echo=TRUE}
+
+# Update stat fields to numeric
+stats <- transform( 
+    stats,
+    FGM = as.numeric(FGM),
+    FGA = as.numeric(FGA),
+    FG. = as.numeric(FG.),
+    X3PM = as.numeric(X3PM),
+    X3PA = as.numeric(X3PA),
+    X3P. = as.numeric(X3P.),
+    FTM = as.numeric(FTM),
+    FTA = as.numeric(FTA),
+    FT. = as.numeric(FT.),
+    X2PM = as.numeric(X2PM),
+    X2PA = as.numeric(X2PA),
+    X2P. = as.numeric(X2P.),
+    PPS = as.numeric(PPS),
+    AFG. = as.numeric(AFG.)
+)
+
+# set vectors for First Name and Last Name to temporarly store names
+players <- data.frame( 
+    do.call( 'rbind', strsplit( as.character( test_stats$PLAYER ),", ",fixed=TRUE))
+)
+names(players) <- c('Player', 'Position')
+stats$PLAYER <- players$Player
+stats$Position <- players$Position
+str(stats)
+```
+
+#### d) Bar Chart
+```{r echo=TRUE}
+Palette1 <- c('red','green','blue','violet','black')
+ggplot( stats , aes( PLAYER, FG., fill=Position ) ) +
+    geom_bar(stat="identity") +
+    scale_fill_manual(values=Palette1) +
+    labs(title="Field Goals Percentage Per Game",x ="Player", y = "Field Goal %" ) +
+    coord_flip() +
+    theme(plot.title = element_text(hjust = 0.5))
