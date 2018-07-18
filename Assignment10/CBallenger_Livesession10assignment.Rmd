@@ -1,0 +1,88 @@
+---
+title: "Homework 10"
+author: "Chris Ballenger"
+date: "7/17/2018"
+output: 
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(kableExtra)
+library(ggplot2)
+```
+
+#### Question 1 Mental Helath Clinics (40%)
+##### a) Load Data from N-MHSS
+```{r}
+load("N-MHSS-2015-DS0001-bndl-data-r/N-MHSS-2015-DS0001-data/N-MHSS-2015-DS0001-data-r.rda")
+
+# Clean White spaces on LST
+levels(mh2015_puf$LST) <- trimws(levels(mh2015_puf$LST))
+
+str(mh2015_puf)
+```
+
+##### b) Distinct List of States
+```{r}
+states <- unique(mh2015_puf$LST)
+kable( states,row.names=FALSE )  %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = F)
+```
+
+##### c) Filter for VAs
+```{r}
+va <- mh2015_puf[mh2015_puf$FACILITYTYPE == "Veterans Administration medical center (VAMC) or other VA health care facility",]
+va <- va[va$LST != "AK" & va$LST != "HI" & va$LST != "PR" & va$LST != "VI" & va$LST != "AS",c(1,2)]
+
+va.states <- va %>%
+    group_by(LST) %>%
+    summarize(count = n())
+kable( va.states,row.names=FALSE )  %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = F)
+```
+
+##### d) Bar Graph
+```{r fig.height=10}
+ggplot( va.states , aes( LST, count, fill = LST ) ) +
+    geom_bar(stat="identity") +
+    labs(title="Veterans Affairs Centers by State",y ="Total Medical Centers", x = "State") +
+    coord_flip() +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
+#### 2) Cleaning and Bringing in New Features (60%)
+##### a)  Bring in Area
+```{r}
+s <- data.frame(abb = state.abb, area = state.area, region = state.region, name = state.name)
+va.states <- merge(va.states, s, by.x="LST",by.y="abb", all.x=TRUE)
+kable(head( va.states ),row.names=FALSE )  %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = F)
+```
+
+All states match with the exception of DC.  This is because I used the states.abb table and not include District of Columbia.  The join also works because I did a tidy data initially to remove white spaces on LST to help filter.
+
+##### b) Correction
+No correction required, we will not report square miles of DC.
+
+##### c) Calcualte per 1000 sq miles
+```{r}
+va.states$per_sq_mile <-  va.states$area / va.states$count / 1000
+kable(head( va.states ),row.names=FALSE )  %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = F)
+```
+
+##### d) Bar Chart
+```{r}
+ggplot( va.states[!is.na(va.states$per_sq_mile),]  , aes( x = reorder(name, per_sq_mile ), per_sq_mile, fill = region ) ) +
+    geom_bar(stat="identity") +
+    labs(title="Veterans Affairs Centers by State",y ="Total Medical Centers per 1000 sq miles", x = "State") +
+    coord_flip() +
+    theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+##### e) Analysis
+The West Region has the highest VA medical centers per 1000 sq miles.  While the Northeast has the least.  Before making a decision, we need to include population to determine if the Northeast is the right fit for a new Medical Center.
