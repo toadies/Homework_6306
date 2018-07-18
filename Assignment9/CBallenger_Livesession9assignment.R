@@ -137,4 +137,5 @@ makeCodebook(stats, replace=TRUE)
 
 library(knitr)
 library(rmarkdown)
-render("CBallenger_Livesession9assignment.Rmd")
+rmarkdown::render("CBallenger_Livesession9assignment.Rmd")
+
