@@ -49,3 +49,10 @@ Assignment5/data/yob2015top_10_girl_names.csv
 ### Live Assignment 10
 * Assignment10/
 * Data provided by https://datafiles.samhsa.gov/study-dataset/national-mental-health-services-survey-2015-n-mhss-2015-ds0001-nid17098
+
+### Live Assignment 11
+* Assignment11/
+* Data provided by:
+    + EuStockMarkets
+    + R library maxtemp
+    + Wands sold via school project

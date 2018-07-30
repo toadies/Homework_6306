@@ -1,0 +1,140 @@
+---
+title: "Homework 11"
+author: "Chris Ballenger"
+date: "7/25/2018"
+output: 
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(kableExtra)
+library(ggplot2)
+library(fpp2) 
+library(dygraphs)
+library(xts)
+```
+
+#### Question 1: Brief Financial Data
+##### a) Attain DAX Index
+```{r}
+daxIndex <- EuStockMarkets[,"DAX"]
+str(daxIndex)
+```
+
+##### b) Plot the Dax Index
+```{r}
+plot(
+    daxIndex,
+    main="EU DAX Index from 1850 to Current",
+    xlab="Year",
+    ylab="Index Price",
+    col="blue"
+)
+abline(
+    v=1997,
+    color="red"
+)
+```
+
+##### c) Decomposed DAX Index
+```{r}
+daxIndex.decompose.multi <- decompose(daxIndex,type="multiplicative")
+plot(daxIndex.decompose.multi,col="blue")
+abline(
+    v=1997,
+    col="red"
+)
+```
+
+#### Question 2: Temperature Data
+##### a) Attain maxtemp data set
+```{r}
+autoplot(maxtemp)
+```
+
+##### b) Get temps from 1990 to current
+```{r}
+temps <- window(maxtemp, start = 1990)
+```
+
+##### c) Predict next 5 years
+```{r}
+temps.ses <- ses(
+    temps, 
+    h=5
+)
+plot(temps.ses)
+lines(
+    temps.ses$fitted,
+    col="blue"
+)
+temps.ses$model$aicc
+```
+
+##### d) Holt's Linear Trend
+```{r}
+temps.holt <- holt(
+    temps, 
+    h=5, 
+    damped = TRUE, 
+    inital = "optimal"
+)
+plot(temps.holt)
+lines(
+    temps.holt$fitted,
+    col="blue"
+)
+
+temps.holt$model$aicc
+```
+
+##### e) Compare AICc
+```{r}
+temps.ses$model$aicc
+temps.holt$model$aicc
+```
+The model with the best fit is SES.
+
+#### Question 3: The Wands Choose the Wizard
+##### a) Load Data
+```{r}
+gregorovitch <- read.csv("Unit11TimeSeries_Gregorovitch.csv")
+ollivander <- read.csv("Unit11TimeSeries_Ollivander.csv")
+
+names(gregorovitch) <- c("year","wands_sold")
+names(ollivander) <- c("year","wands_sold")
+
+str(gregorovitch)
+str(ollivander)
+```
+
+##### b) Format Date
+```{r}
+gregorovitch$year <- as.Date(gregorovitch$year, "%m/%d/%Y")
+ollivander$year <- as.Date(gregorovitch$year, "%m/%d/%Y")
+
+str(gregorovitch)
+str(ollivander)
+```
+
+##### c) Load data into time series
+```{r}
+gregorovitch.ts <- xts(gregorovitch$wands_sold, order.by=gregorovitch$year)
+ollivander.ts <- xts(ollivander$wands_sold, order.by=ollivander$year)
+str(gregorovitch.ts)
+str(ollivander.ts)
+```
+
+##### d) Create a dyGraph
+```{r}
+wandsSold <- merge(gregorovitch.ts,ollivander.ts)
+
+dygraph(wandsSold,main="Olivander vs. Gregorovitch Wand Sales",xlab="Year",ylab="Sales") %>%
+    dySeries("ollivander.ts", label="Ollivander", col="red") %>%
+    dySeries("gregorovitch.ts", label="Gregorovitch",col="green") %>%
+    dyRangeSelector() %>%
+    dyShading(from="1995-01-01",to="1999-01-01") %>%
+    dyHighlight(highlightSeriesOpts = list( strokeWidth = 3 ) )
